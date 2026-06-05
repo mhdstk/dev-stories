@@ -1,0 +1,22 @@
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-json",
+    "ms-vscode.test-adapter-converter",
+    "hbenl.vscode-test-explorer",
+    "orta.vscode-jest",
+    "ms-vscode.vscode-markdown",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-github-issue-notebooks",
+    "GitHub.copilot",
+    "ms-vscode.vscode-webpack-analyzer"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-typescript",
+    "hookyqr.beautify"
+  ]
+}

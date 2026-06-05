@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VS Code Stories - Web Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #252526;
+            padding: 20px;
+            border-bottom: 1px solid #3c3c3c;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header .subtitle {
+            color: #cccccc;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .story-card {
+            background: #252526;
+            border: 1px solid #3c3c3c;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-2px);
+            border-color: #007acc;
+        }
+
+        .story-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .story-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .story-author {
+            flex: 1;
+        }
+
+        .story-author-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .story-author-username {
+            color: #cccccc;
+            font-size: 14px;
+        }
+
+        .story-time {
+            color: #cccccc;
+            font-size: 12px;
+        }
+
+        .story-content {
+            margin-bottom: 16px;
+        }
+
+        .story-text {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .story-code {
+            background: #1e1e1e;
+            border: 1px solid #3c3c3c;
+            border-radius: 4px;
+            padding: 16px;
+            margin: 8px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .story-code-header {
+            font-size: 12px;
+            color: #cccccc;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .story-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .story-tag {
+            background: #007acc;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .story-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .story-reactions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .story-reaction {
+            background: none;
+            border: none;
+            color: #cccccc;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .story-reaction:hover {
+            background: #3c3c3c;
+        }
+
+        .story-views {
+            color: #cccccc;
+            font-size: 12px;
+        }
+
+        .cta-section {
+            text-align: center;
+            background: #252526;
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid #3c3c3c;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #007acc;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+
+        .cta-button:hover {
+            background: #005a9e;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #cccccc;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #cccccc;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 16px;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .story-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .header {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>
+            <span>📺</span>
+            VS Code Stories
+        </h1>
+        <div class="subtitle">Share and discover code snippets from the developer community</div>
+    </header>
+
+    <div class="container">
+        <div id="story-container">
+            <div class="loading">
+                <div>Loading stories...</div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h3 style="margin-bottom: 16px;">Want to share your own stories?</h3>
+            <p style="margin-bottom: 24px; color: #cccccc;">
+                Install the VS Code Stories extension and start sharing your code snippets with the community.
+            </p>
+            <a href="vscode:extension/mhdstk.vscode-stories" class="cta-button">
+                Install VS Code Extension
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Mock story data for demo
+        const mockStories = [
+            {
+                id: 'story1',
+                authorName: 'John Developer',
+                authorUsername: 'johndev',
+                authorAvatar: 'https://github.com/johndev.png',
+                timestamp: Date.now() - 2 * 60 * 60 * 1000, // 2 hours ago
+                content: {
+                    type: 'code',
+                    code: {
+                        language: 'javascript',
+                        filename: 'utils.js',
+                        content: 'const debounce = (func, wait) => {\n  let timeout;\n  return function(...args) {\n    clearTimeout(timeout);\n    timeout = setTimeout(() => func.apply(this, args), wait);\n  };\n};'
+                    }
+                },
+                tags: ['javascript', 'utils', 'performance'],
+                viewCount: 234,
+                reactions: { '👍': 45, '🔥': 23, '💡': 12 }
+            },
+            {
+                id: 'story2',
+                authorName: 'Sarah Code',
+                authorUsername: 'sarahcodes',
+                authorAvatar: 'https://github.com/sarahcodes.png',
+                timestamp: Date.now() - 5 * 60 * 60 * 1000, // 5 hours ago
+                content: {
+                    type: 'text',
+                    text: 'Just discovered this amazing VS Code extension that helps with Git workflows! 🚀 It automatically suggests better commit messages based on your file changes. Game changer for maintaining clean commit history.'
+                },
+                tags: ['vscode', 'git', 'productivity'],
+                viewCount: 156,
+                reactions: { '👍': 67, '🔥': 34 }
+            },
+            {
+                id: 'story3',
+                authorName: 'Alex Python',
+                authorUsername: 'alexpython',
+                authorAvatar: 'https://github.com/alexpython.png',
+                timestamp: Date.now() - 8 * 60 * 60 * 1000, // 8 hours ago
+                content: {
+                    type: 'code',
+                    code: {
+                        language: 'python',
+                        filename: 'data_processor.py',
+                        content: 'def process_batch(data, batch_size=1000):\n    """Process data in batches to avoid memory issues"""\n    for i in range(0, len(data), batch_size):\n        batch = data[i:i + batch_size]\n        yield batch'
+                    }
+                },
+                tags: ['python', 'data', 'optimization'],
+                viewCount: 89,
+                reactions: { '👍': 23, '💡': 15 }
+            }
+        ];
+
+        function formatTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (hours > 0) {
+                return `${hours}h ago`;
+            } else if (minutes > 0) {
+                return `${minutes}m ago`;
+            } else {
+                return 'Just now';
+            }
+        }
+
+        function renderStory(story) {
+            const contentHtml = story.content.type === 'code' 
+                ? `<div class="story-code-header">
+                     <span>📁</span>
+                     ${story.content.code.filename}
+                   </div>
+                   <div class="story-code">${story.content.code.content}</div>`
+                : `<div class="story-text">${story.content.text}</div>`;
+
+            const tagsHtml = story.tags.map(tag => 
+                `<span class="story-tag">#${tag}</span>`
+            ).join('');
+
+            const reactionsHtml = Object.entries(story.reactions).map(([emoji, count]) =>
+                `<button class="story-reaction">${emoji} ${count}</button>`
+            ).join('');
+
+            return `
+                <div class="story-card">
+                    <div class="story-header">
+                        <img src="${story.authorAvatar}" alt="${story.authorName}" class="story-avatar">
+                        <div class="story-author">
+                            <div class="story-author-name">${story.authorName}</div>
+                            <div class="story-author-username">@${story.authorUsername}</div>
+                        </div>
+                        <div class="story-time">${formatTimeAgo(story.timestamp)}</div>
+                    </div>
+                    <div class="story-content">
+                        ${contentHtml}
+                    </div>
+                    <div class="story-tags">
+                        ${tagsHtml}
+                    </div>
+                    <div class="story-actions">
+                        <div class="story-reactions">
+                            ${reactionsHtml}
+                        </div>
+                        <div class="story-views">${story.viewCount} views</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadStories() {
+            const container = document.getElementById('story-container');
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                if (mockStories.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No stories yet</h3>
+                            <p>Be the first to share a story with the community!</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="story-grid">
+                            ${mockStories.map(renderStory).join('')}
+                        </div>
+                    `;
+                }
+            }, 1000);
+        }
+
+        // Load stories when page loads
+        document.addEventListener('DOMContentLoaded', loadStories);
+    </script>
+</body>
+</html>

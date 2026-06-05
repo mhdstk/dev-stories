@@ -1,0 +1,258 @@
+{
+  "name": "dev-stories",
+  "displayName": "Dev Stories",
+  "description": "Instagram-like stories for developers - share code snippets, insights, and updates with your team and the community",
+  "version": "0.1.1",
+  "publisher": "mhdstk",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Social"
+  ],
+  "keywords": [
+    "stories",
+    "social",
+    "code sharing",
+    "github",
+    "collaboration",
+    "developer",
+    "community",
+    "snippets"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mhdstk/dev-stories.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mhdstk/dev-stories/issues"
+  },
+  "homepage": "https://github.com/mhdstk/dev-stories#readme",
+  "license": "MIT",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dev-stories.authenticate",
+        "title": "Sign In with GitHub",
+        "category": "Stories"
+      },
+      {
+        "command": "dev-stories.signOut",
+        "title": "Sign Out",
+        "category": "Stories",
+        "when": "stories.authenticated"
+      },
+      {
+        "command": "dev-stories.viewFeed",
+        "title": "View Story Feed",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.refreshFeed",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "dev-stories.createStory",
+        "title": "Create Story",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.createTextStory",
+        "title": "Create Text Story",
+        "category": "Stories",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "dev-stories.createCodeStory",
+        "title": "Share as Story",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.openStory",
+        "title": "Open Story",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.viewProfile",
+        "title": "View Profile",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.manageGroups",
+        "title": "Manage Groups",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.joinGroup",
+        "title": "Join Group",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.followUser",
+        "title": "Follow User",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.checkExpiredStories",
+        "title": "Cleanup Expired Stories",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.viewExpiringStories",
+        "title": "View Expiring Stories",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.extendStoryExpiration",
+        "title": "Extend Story Expiration",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.discoverUsers",
+        "title": "Discover Users",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.viewUserProfile",
+        "title": "View User Profile",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.viewGroupDetails",
+        "title": "View Group Details",
+        "category": "Stories"
+      },
+      {
+        "command": "vscode-stories.searchUsers",
+        "title": "Search Users",
+        "category": "Stories"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "dev-stories.createCodeStory",
+          "when": "editorHasSelection",
+          "group": "stories"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "dev-stories.createStory",
+          "when": "explorerResourceIsFile",
+          "group": "stories"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "vscode-stories.refreshFeed",
+          "when": "view == stories.feed",
+          "group": "navigation"
+        },
+        {
+          "command": "vscode-stories.createTextStory",
+          "when": "view == stories.feed && stories.authenticated",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "vscode-stories.openStory",
+          "when": "view == stories.feed && viewItem == story",
+          "group": "inline"
+        },
+        {
+          "command": "vscode-stories.followUser",
+          "when": "view == stories.following && viewItem == followedUser",
+          "group": "inline"
+        },
+        {
+          "command": "vscode-stories.joinGroup",
+          "when": "view == stories.groups && viewItem == storyGroup",
+          "group": "inline"
+        }
+      ]
+    },
+    "views": {
+      "stories-explorer": [
+        {
+          "id": "stories.feed",
+          "name": "Story Feed",
+          "when": "stories.authenticated"
+        },
+        {
+          "id": "stories.following",
+          "name": "Following",
+          "when": "stories.authenticated"
+        },
+        {
+          "id": "stories.groups",
+          "name": "Groups",
+          "when": "stories.authenticated"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "stories-explorer",
+          "title": "Stories",
+          "icon": "$(broadcast)"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p tsconfig.test.json --outDir out/test",
+    "watch-tests": "tsc -p tsconfig.test.json -w --outDir out/test",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:integration": "node ./out/test/runTest.js",
+    "vscode:prepublish": "npm run package",
+    "deploy": "vsce package",
+    "publish:marketplace": "vsce publish",
+    "publish:openvsx": "ovsx publish *.vsix"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/jest": "^29.5.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^8.60.1",
+    "@typescript-eslint/parser": "^8.60.1",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^2.22.0",
+    "eslint": "^8.54.0",
+    "glob": "^11.1.0",
+    "jest": "^29.7.0",
+    "mocha": "^11.3.0",
+    "ovsx": "^0.8.3",
+    "ts-jest": "^29.1.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.9.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@octokit/auth-oauth-app": "^7.0.1",
+    "@octokit/rest": "^20.0.2",
+    "uuid": "^14.0.0"
+  }
+}
