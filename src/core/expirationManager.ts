@@ -83,7 +83,7 @@ export class ExpirationManager {
             );
 
             if (action === 'View Stories') {
-                vscode.commands.executeCommand('vscode-stories.viewFeed');
+                vscode.commands.executeCommand('dev-stories.viewFeed');
             }
         }
     }

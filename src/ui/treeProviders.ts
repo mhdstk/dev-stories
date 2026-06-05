@@ -17,7 +17,7 @@ export class StoryTreeItem extends vscode.TreeItem {
         this.iconPath = new vscode.ThemeIcon('broadcast');
         
         this.command = {
-            command: 'vscode-stories.openStory',
+            command: 'dev-stories.openStory',
             title: 'Open Story',
             arguments: [story]
         };
@@ -152,7 +152,7 @@ export class StoryFollowingProvider implements vscode.TreeDataProvider<vscode.Tr
                 placeholder.description = 'Find users to follow';
                 placeholder.iconPath = new vscode.ThemeIcon('account');
                 placeholder.command = {
-                    command: 'vscode-stories.discoverUsers',
+                    command: 'dev-stories.discoverUsers',
                     title: 'Discover Users'
                 };
                 return [placeholder];
@@ -165,7 +165,7 @@ export class StoryFollowingProvider implements vscode.TreeDataProvider<vscode.Tr
                 item.iconPath = new vscode.ThemeIcon('account');
                 item.contextValue = 'followedUser';
                 item.command = {
-                    command: 'vscode-stories.viewUserProfile',
+                    command: 'dev-stories.viewUserProfile',
                     title: 'View Profile',
                     arguments: [user]
                 };
@@ -226,7 +226,7 @@ export class StoryGroupsProvider implements vscode.TreeDataProvider<vscode.TreeI
                 item.iconPath = new vscode.ThemeIcon(group.isPrivate ? 'lock' : 'organization');
                 item.contextValue = 'storyGroup';
                 item.command = {
-                    command: 'vscode-stories.viewGroupDetails',
+                    command: 'dev-stories.viewGroupDetails',
                     title: 'View Group',
                     arguments: [group]
                 };

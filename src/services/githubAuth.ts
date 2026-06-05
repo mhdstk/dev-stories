@@ -50,7 +50,7 @@ export class GitHubAuthService {
             };
 
             // Set authentication context
-            vscode.commands.executeCommand('setContext', 'stories.authenticated', true);
+            vscode.commands.executeCommand('setContext', 'devstories.authenticated', true);
             
             vscode.window.showInformationMessage(`Welcome to VS Code Stories, ${this.currentUser.name}!`);
 
@@ -73,7 +73,7 @@ export class GitHubAuthService {
             this.currentUser = null;
             this.octokit = null;
             
-            vscode.commands.executeCommand('setContext', 'stories.authenticated', false);
+            vscode.commands.executeCommand('setContext', 'devstories.authenticated', false);
             vscode.window.showInformationMessage('Successfully signed out of VS Code Stories');
 
         } catch (error) {

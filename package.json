@@ -57,7 +57,7 @@
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.refreshFeed",
+        "command": "dev-stories.refreshFeed",
         "title": "Refresh",
         "icon": "$(refresh)"
       },
@@ -67,7 +67,7 @@
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.createTextStory",
+        "command": "dev-stories.createTextStory",
         "title": "Create Text Story",
         "category": "Stories",
         "icon": "$(comment)"
@@ -78,62 +78,62 @@
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.openStory",
+        "command": "dev-stories.openStory",
         "title": "Open Story",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.viewProfile",
+        "command": "dev-stories.viewProfile",
         "title": "View Profile",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.manageGroups",
+        "command": "dev-stories.manageGroups",
         "title": "Manage Groups",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.joinGroup",
+        "command": "dev-stories.joinGroup",
         "title": "Join Group",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.followUser",
+        "command": "dev-stories.followUser",
         "title": "Follow User",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.checkExpiredStories",
+        "command": "dev-stories.checkExpiredStories",
         "title": "Cleanup Expired Stories",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.viewExpiringStories",
+        "command": "dev-stories.viewExpiringStories",
         "title": "View Expiring Stories",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.extendStoryExpiration",
+        "command": "dev-stories.extendStoryExpiration",
         "title": "Extend Story Expiration",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.discoverUsers",
+        "command": "dev-stories.discoverUsers",
         "title": "Discover Users",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.viewUserProfile",
+        "command": "dev-stories.viewUserProfile",
         "title": "View User Profile",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.viewGroupDetails",
+        "command": "dev-stories.viewGroupDetails",
         "title": "View Group Details",
         "category": "Stories"
       },
       {
-        "command": "vscode-stories.searchUsers",
+        "command": "dev-stories.searchUsers",
         "title": "Search Users",
         "category": "Stories"
       }
@@ -155,29 +155,29 @@
       ],
       "view/title": [
         {
-          "command": "vscode-stories.refreshFeed",
+          "command": "dev-stories.refreshFeed",
           "when": "view == stories.feed",
           "group": "navigation"
         },
         {
-          "command": "vscode-stories.createTextStory",
+          "command": "dev-stories.createTextStory",
           "when": "view == stories.feed && stories.authenticated",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "vscode-stories.openStory",
+          "command": "dev-stories.openStory",
           "when": "view == stories.feed && viewItem == story",
           "group": "inline"
         },
         {
-          "command": "vscode-stories.followUser",
+          "command": "dev-stories.followUser",
           "when": "view == stories.following && viewItem == followedUser",
           "group": "inline"
         },
         {
-          "command": "vscode-stories.joinGroup",
+          "command": "dev-stories.joinGroup",
           "when": "view == stories.groups && viewItem == storyGroup",
           "group": "inline"
         }
@@ -186,27 +186,27 @@
     "views": {
       "stories-explorer": [
         {
-          "id": "stories.feed",
+          "id": "devstories.feed",
           "name": "Story Feed",
-          "when": "stories.authenticated"
+          "when": "devstories.authenticated"
         },
         {
-          "id": "stories.following",
+          "id": "devstories.following",
           "name": "Following",
-          "when": "stories.authenticated"
+          "when": "devstories.authenticated"
         },
         {
-          "id": "stories.groups",
+          "id": "devstories.groups",
           "name": "Groups",
-          "when": "stories.authenticated"
+          "when": "devstories.authenticated"
         }
       ]
     },
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "stories-explorer",
-          "title": "Stories",
+          "id": "devstories-explorer",
+          "title": "Dev Stories",
           "icon": "$(broadcast)"
         }
       ]

@@ -57,4 +57,4 @@ const mockVscode = {
 jest.mock('vscode', () => mockVscode, { virtual: true });
 
 // Global test utilities
-global.mockVscode = mockVscode;
+(global as any).mockVscode = mockVscode;

@@ -1,13 +1,13 @@
-# VS Code Stories Extension
+# Dev Stories Extension
 
-![VS Code Stories Logo](https://raw.githubusercontent.com/mhdstk/vscode-stories/main/media/icon.png)
+![Dev Stories Logo](https://raw.githubusercontent.com/mhdstk/dev-stories/main/media/icon.png)
 
-[![Build Status](https://github.com/mhdstk/vscode-stories/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/mhdstk/vscode-stories/actions)
-[![Coverage Status](https://codecov.io/gh/mhdstk/vscode-stories/branch/main/graph/badge.svg)](https://codecov.io/gh/mhdstk/vscode-stories)
-[![VS Code Marketplace](https://vsmarketplacebadges.dev/version-short/mhdstk.vscode-stories.svg)](https://marketplace.visualstudio.com/items?itemName=mhdstk.vscode-stories)
-[![OpenVSX](https://img.shields.io/open-vsx/v/mhdstk/vscode-stories?label=OpenVSX)](https://open-vsx.org/extension/mhdstk/vscode-stories)
+[![Build Status](https://github.com/mhdstk/dev-stories/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/mhdstk/dev-stories/actions)
+[![Coverage Status](https://codecov.io/gh/mhdstk/dev-stories/branch/main/graph/badge.svg)](https://codecov.io/gh/mhdstk/dev-stories)
+[![VS Code Marketplace](https://vsmarketplacebadges.dev/version-short/mhdstk.dev-stories.svg)](https://marketplace.visualstudio.com/items?itemName=mhdstk.dev-stories)
+[![OpenVSX](https://img.shields.io/open-vsx/v/mhdstk/dev-stories?label=OpenVSX)](https://open-vsx.org/extension/mhdstk/dev-stories)
 
-An Instagram-like stories feature integrated into VS Code, allowing developers to share code snippets, insights, and updates with the developer community through ephemeral 24-hour stories.
+An Instagram-like stories feature for any code editor, allowing developers to share code snippets, insights, and updates with the developer community through ephemeral 24-hour stories.
 
 ## ✨ Features
 
@@ -51,22 +51,22 @@ An Instagram-like stories feature integrated into VS Code, allowing developers t
 1. **From VS Code Marketplace**:
    - Open VS Code
    - Go to Extensions (`Ctrl+Shift+X`)
-   - Search for "VS Code Stories"
+   - Search for "Dev Stories"
    - Click Install
 
 2. **From OpenVSX Registry** (for VS Code alternatives):
    - Open your VS Code compatible editor
    - Go to Extensions
-   - Search for "VS Code Stories" by mhdstk
+   - Search for "Dev Stories" by mhdstk
    - Click Install
 
 3. **From Command Line**:
    ```bash
    # VS Code Marketplace
-   code --install-extension mhdstk.vscode-stories
+   code --install-extension mhdstk.dev-stories
    
    # OpenVSX Registry  
-   code --install-extension mhdstk.vscode-stories --from-openvsx
+   code --install-extension mhdstk.dev-stories --from-openvsx
    ```
 
 ### First Steps
@@ -194,8 +194,8 @@ graph LR
 
 ```bash
 # Clone the repository
-git clone https://github.com/mhdstk/vscode-stories.git
-cd vscode-stories
+git clone https://github.com/mhdstk/dev-stories.git
+cd dev-stories
 
 # Install dependencies
 npm install
@@ -215,7 +215,7 @@ npm test
 ### Project Structure
 
 ```
-vscode-stories/
+dev-stories/
 ├── src/                     # Extension source code
 │   ├── core/               # Core business logic
 │   ├── services/           # GitHub API and external services
@@ -246,8 +246,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Getting Help
 
 - **Documentation**: Check this README and inline help
-- **Issues**: [Report bugs or request features](https://github.com/mhdstk/vscode-stories/issues)
-- **Discussions**: [Community discussions and Q&A](https://github.com/mhdstk/vscode-stories/discussions)
+- **Issues**: [Report bugs or request features](https://github.com/mhdstk/dev-stories/issues)
+- **Discussions**: [Community discussions and Q&A](https://github.com/mhdstk/dev-stories/discussions)
 
 ### Known Issues
 

@@ -16,7 +16,7 @@ export class StatusBarManager {
             100
         );
         
-        this.statusBarItem.command = 'vscode-stories.viewFeed';
+        this.statusBarItem.command = 'dev-stories.viewFeed';
         context.subscriptions.push(this.statusBarItem);
         
         this.updateStatusBar();
@@ -34,7 +34,7 @@ export class StatusBarManager {
             if (!isAuthenticated) {
                 this.statusBarItem.text = '$(broadcast) Stories';
                 this.statusBarItem.tooltip = 'Click to sign in and view stories';
-                this.statusBarItem.command = 'vscode-stories.authenticate';
+                this.statusBarItem.command = 'dev-stories.authenticate';
             } else {
                 const user = await this.authService.getAuthenticatedUser();
                 const myStories = await this.storyManager.getMyStories();
@@ -42,7 +42,7 @@ export class StatusBarManager {
                 
                 this.statusBarItem.text = `$(broadcast) ${activeStories}`;
                 this.statusBarItem.tooltip = `${activeStories} active stories - Click to view feed`;
-                this.statusBarItem.command = 'vscode-stories.viewFeed';
+                this.statusBarItem.command = 'dev-stories.viewFeed';
                 
                 if (activeStories > 0) {
                     this.statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.prominentBackground');

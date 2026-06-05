@@ -1,5 +1,5 @@
 {
-  "name": "vscode-stories-webview",
+  "name": "dev-stories-webview",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

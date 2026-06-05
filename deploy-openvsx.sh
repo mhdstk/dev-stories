@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# VS Code Stories Extension - OpenVSX Deployment Script
+# Dev Stories Extension - OpenVSX Deployment Script
 # Usage: ./deploy-openvsx.sh
 
 set -e
 
-echo "🚀 Starting OpenVSX deployment for VS Code Stories..."
+echo "🚀 Starting OpenVSX deployment for Dev Stories..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -142,7 +142,7 @@ if [ $? -eq 0 ]; then
     print_success "Successfully published to OpenVSX Registry!"
     echo
     print_status "Your extension is now available at:"
-    echo "https://open-vsx.org/extension/mhdstk/vscode-stories"
+    echo "https://open-vsx.org/extension/mhdstk/dev-stories"
     echo
     print_status "It may take a few minutes to appear in search results"
 else

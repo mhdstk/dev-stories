@@ -26,19 +26,19 @@ export function activate(context: vscode.ExtensionContext) {
     const groupsProvider = new StoryGroupsProvider(context, authService, socialService);
 
     // Register tree views
-    const feedTreeView = vscode.window.createTreeView('stories.feed', {
+    const feedTreeView = vscode.window.createTreeView('devstories.feed', {
         treeDataProvider: feedProvider,
         showCollapseAll: true,
         canSelectMany: false
     });
 
-    const followingTreeView = vscode.window.createTreeView('stories.following', {
+    const followingTreeView = vscode.window.createTreeView('devstories.following', {
         treeDataProvider: followingProvider,
         showCollapseAll: false,
         canSelectMany: false
     });
 
-    const groupsTreeView = vscode.window.createTreeView('stories.groups', {
+    const groupsTreeView = vscode.window.createTreeView('devstories.groups', {
         treeDataProvider: groupsProvider,
         showCollapseAll: false,
         canSelectMany: false
@@ -48,7 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
     authService.getAuthenticatedUser().then(user => {
         if (user) {
             console.log(`Restored authentication for user: ${user.login}`);
-            vscode.commands.executeCommand('setContext', 'stories.authenticated', true);
+            vscode.commands.executeCommand('setContext', 'devstories.authenticated', true);
             feedProvider.refresh();
             followingProvider.refresh();
             groupsProvider.refresh();
@@ -59,7 +59,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Register commands
     const commands = [
         // Authentication commands
-        vscode.commands.registerCommand('vscode-stories.authenticate', async () => {
+        vscode.commands.registerCommand('dev-stories.authenticate', async () => {
             const result = await authService.authenticate();
             if (result) {
                 vscode.window.showInformationMessage(`Authenticated as ${result.user.name}`);
@@ -70,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
         
-        vscode.commands.registerCommand('vscode-stories.signOut', async () => {
+        vscode.commands.registerCommand('dev-stories.signOut', async () => {
             await authService.signOut();
             feedProvider.refresh();
             followingProvider.refresh();
@@ -79,7 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         // Story viewing commands
-        vscode.commands.registerCommand('vscode-stories.viewFeed', async () => {
+        vscode.commands.registerCommand('dev-stories.viewFeed', async () => {
             if (await authService.ensureAuthenticated()) {
                 StoryFeedPanel.createOrShow(context.extensionUri, context);
             } else {
@@ -87,7 +87,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
 
-        vscode.commands.registerCommand('vscode-stories.openStory', async (story) => {
+        vscode.commands.registerCommand('dev-stories.openStory', async (story) => {
             const viewer = StoryViewer.getInstance(context);
             
             const options = [
@@ -113,7 +113,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
 
-        vscode.commands.registerCommand('vscode-stories.refreshFeed', () => {
+        vscode.commands.registerCommand('dev-stories.refreshFeed', () => {
             feedProvider.refresh();
             followingProvider.refresh();
             groupsProvider.refresh();
@@ -121,7 +121,7 @@ export function activate(context: vscode.ExtensionContext) {
         }),
         
         // Story creation commands
-        vscode.commands.registerCommand('vscode-stories.createStory', async () => {
+        vscode.commands.registerCommand('dev-stories.createStory', async () => {
             if (await authService.ensureAuthenticated()) {
                 const story = await storyManager.createStoryWizard();
                 if (story) {
@@ -134,7 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
         
-        vscode.commands.registerCommand('vscode-stories.createCodeStory', async () => {
+        vscode.commands.registerCommand('dev-stories.createCodeStory', async () => {
             if (await authService.ensureAuthenticated()) {
                 const story = await storyManager.createCodeStoryFromSelection();
                 if (story) {
@@ -148,7 +148,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
 
-        vscode.commands.registerCommand('vscode-stories.createTextStory', async () => {
+        vscode.commands.registerCommand('dev-stories.createTextStory', async () => {
             if (await authService.ensureAuthenticated()) {
                 const text = await vscode.window.showInputBox({
                     prompt: 'What\'s on your mind?',
@@ -170,7 +170,7 @@ export function activate(context: vscode.ExtensionContext) {
         }),
         
         // Profile and management commands
-        vscode.commands.registerCommand('vscode-stories.viewProfile', async () => {
+        vscode.commands.registerCommand('dev-stories.viewProfile', async () => {
             if (await authService.ensureAuthenticated()) {
                 const user = await authService.getAuthenticatedUser();
                 const stories = await storyManager.getMyStories();
@@ -182,7 +182,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
         
-        vscode.commands.registerCommand('vscode-stories.manageGroups', async () => {
+        vscode.commands.registerCommand('dev-stories.manageGroups', async () => {
             if (await authService.ensureAuthenticated()) {
                 vscode.window.showInformationMessage('Manage Groups - Coming Soon!');
             } else {
@@ -191,21 +191,21 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         // Tree view actions
-        vscode.commands.registerCommand('vscode-stories.joinGroup', (group) => {
+        vscode.commands.registerCommand('dev-stories.joinGroup', (group) => {
             vscode.window.showInformationMessage(`Joining group: ${group.label}`);
         }),
 
-        vscode.commands.registerCommand('vscode-stories.followUser', (user) => {
+        vscode.commands.registerCommand('dev-stories.followUser', (user) => {
             vscode.window.showInformationMessage(`Following user: ${user.label}`);
         }),
 
         // Story management commands
-        vscode.commands.registerCommand('vscode-stories.checkExpiredStories', async () => {
+        vscode.commands.registerCommand('dev-stories.checkExpiredStories', async () => {
             await expirationManager.checkAndCleanupExpiredStories();
             vscode.window.showInformationMessage('Expired stories cleanup completed');
         }),
 
-        vscode.commands.registerCommand('vscode-stories.viewExpiringStories', async () => {
+        vscode.commands.registerCommand('dev-stories.viewExpiringStories', async () => {
             if (await authService.ensureAuthenticated()) {
                 const expiringStories = await expirationManager.getExpiringStories(24);
                 if (expiringStories.length === 0) {
@@ -222,7 +222,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
 
-        vscode.commands.registerCommand('vscode-stories.extendStoryExpiration', async () => {
+        vscode.commands.registerCommand('dev-stories.extendStoryExpiration', async () => {
             if (await authService.ensureAuthenticated()) {
                 const stories = await storyManager.getMyStories();
                 const viewer = StoryViewer.getInstance(context);
@@ -251,7 +251,7 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         // Social features
-        vscode.commands.registerCommand('vscode-stories.discoverUsers', async () => {
+        vscode.commands.registerCommand('dev-stories.discoverUsers', async () => {
             if (await authService.ensureAuthenticated()) {
                 const suggestions = await socialService.getSuggestedUsers();
                 
@@ -296,7 +296,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
 
-        vscode.commands.registerCommand('vscode-stories.viewUserProfile', async (user) => {
+        vscode.commands.registerCommand('dev-stories.viewUserProfile', async (user) => {
             const isFollowing = await socialService.isFollowing(user.login);
             const profile = await socialService.getUserProfile(user.login);
             
@@ -330,7 +330,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         }),
 
-        vscode.commands.registerCommand('vscode-stories.viewGroupDetails', async (group) => {
+        vscode.commands.registerCommand('dev-stories.viewGroupDetails', async (group) => {
             const info = [
                 `🏢 **${group.name}**`,
                 `📝 ${group.description}`,
@@ -352,11 +352,11 @@ export function activate(context: vscode.ExtensionContext) {
                 groupsProvider.refresh();
             } else if (action === 'View Stories') {
                 // TODO: Filter stories by group
-                vscode.commands.executeCommand('vscode-stories.viewFeed');
+                vscode.commands.executeCommand('dev-stories.viewFeed');
             }
         }),
 
-        vscode.commands.registerCommand('vscode-stories.searchUsers', async () => {
+        vscode.commands.registerCommand('dev-stories.searchUsers', async () => {
             if (await authService.ensureAuthenticated()) {
                 const query = await vscode.window.showInputBox({
                     prompt: 'Search for GitHub users',
@@ -385,7 +385,7 @@ export function activate(context: vscode.ExtensionContext) {
                     });
 
                     if (selected) {
-                        vscode.commands.executeCommand('vscode-stories.viewUserProfile', selected.user);
+                        vscode.commands.executeCommand('dev-stories.viewUserProfile', selected.user);
                     }
                 }
             } else {
@@ -395,7 +395,7 @@ export function activate(context: vscode.ExtensionContext) {
     ];
 
     // Set initial context
-    vscode.commands.executeCommand('setContext', 'stories.authenticated', false);
+    vscode.commands.executeCommand('setContext', 'devstories.authenticated', false);
 
     // Add all commands and providers to context subscriptions
     commands.forEach(command => context.subscriptions.push(command));
