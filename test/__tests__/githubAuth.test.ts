@@ -72,19 +72,25 @@ describe('GitHubAuthService', () => {
       const result = await authService.authenticate();
 
       expect(result).toBeNull();
-      expect(global.mockVscode.window.showErrorMessage).toHaveBeenCalledWith('GitHub authentication failed');
+      expect((global as any).mockVscode.window.showErrorMessage).toHaveBeenCalledWith('GitHub authentication failed');
     });
 
     it('should handle authentication errors gracefully', async () => {
+      // Suppress expected console.error for this test
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      
       const error = new Error('Authentication failed');
       (global as any).mockVscode.authentication.getSession.mockRejectedValue(error);
 
       const result = await authService.authenticate();
 
       expect(result).toBeNull();
-      expect(global.mockVscode.window.showErrorMessage).toHaveBeenCalledWith(
+      expect((global as any).mockVscode.window.showErrorMessage).toHaveBeenCalledWith(
         expect.stringContaining('Authentication failed')
       );
+
+      // Restore console.error
+      consoleSpy.mockRestore();
     });
   });
 
@@ -92,8 +98,8 @@ describe('GitHubAuthService', () => {
     it('should successfully sign out', async () => {
       await authService.signOut();
 
-      expect(global.mockVscode.window.showInformationMessage).toHaveBeenCalledWith(
-        'Successfully signed out of VS Code Stories'
+      expect((global as any).mockVscode.window.showInformationMessage).toHaveBeenCalledWith(
+        'Successfully signed out of Dev Stories'
       );
     });
   });

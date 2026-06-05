@@ -1,5 +1,34 @@
 // Test setup file
-import * as vscode from 'vscode';
+
+const storyCommands = [
+  'dev-stories.authenticate',
+  'dev-stories.signOut',
+  'dev-stories.viewFeed',
+  'dev-stories.refreshFeed',
+  'dev-stories.createStory',
+  'dev-stories.createTextStory',
+  'dev-stories.createCodeStory',
+  'dev-stories.openStory',
+  'dev-stories.viewProfile',
+  'dev-stories.manageGroups',
+  'dev-stories.joinGroup',
+  'dev-stories.followUser',
+  'dev-stories.checkExpiredStories',
+  'dev-stories.viewExpiringStories',
+  'dev-stories.extendStoryExpiration',
+  'dev-stories.discoverUsers',
+  'dev-stories.viewUserProfile',
+  'dev-stories.viewGroupDetails',
+  'dev-stories.searchUsers'
+];
+
+const mockedExtension = {
+  id: 'mhdstk.dev-stories',
+  isActive: false,
+  activate: jest.fn().mockImplementation(async function (this: { isActive: boolean }) {
+    this.isActive = true;
+  })
+};
 
 // Mock VS Code API
 const mockVscode = {
@@ -23,6 +52,10 @@ const mockVscode = {
   commands: {
     registerCommand: jest.fn(),
     executeCommand: jest.fn(),
+    getCommands: jest.fn().mockResolvedValue(storyCommands),
+  },
+  extensions: {
+    getExtension: jest.fn().mockReturnValue(mockedExtension),
   },
   authentication: {
     getSession: jest.fn(),

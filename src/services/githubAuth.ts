@@ -74,7 +74,7 @@ export class GitHubAuthService {
             this.octokit = null;
             
             vscode.commands.executeCommand('setContext', 'devstories.authenticated', false);
-            vscode.window.showInformationMessage('Successfully signed out of VS Code Stories');
+            vscode.window.showInformationMessage('Successfully signed out of Dev Stories');
 
         } catch (error) {
             console.error('Sign out error:', error);

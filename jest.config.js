@@ -3,11 +3,13 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src', '<rootDir>/test'],
   testMatch: [
-    '**/__tests__/**/*.+(ts|tsx|js)',
-    '**/*.(test|spec).+(ts|tsx|js)'
+    '**/__tests__/**/*.+(ts|tsx)',
+    '**/*.(test|spec).+(ts|tsx)'
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest'
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: 'tsconfig.test.json'
+    }]
   },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
@@ -23,6 +25,7 @@ module.exports = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/out/',
-    '/webview-ui/'
+    '/webview-ui/',
+    '.*\\.js$'
   ]
 };

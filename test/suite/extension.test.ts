@@ -1,15 +1,13 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-suite('Extension Test Suite', () => {
-  vscode.window.showInformationMessage('Start all tests.');
-
+describe('Extension Test Suite', () => {
   test('Extension should be present', () => {
-    assert.ok(vscode.extensions.getExtension('mhdstk.vscode-stories'));
+    assert.ok(vscode.extensions.getExtension('mhdstk.dev-stories'));
   });
 
   test('Extension should activate', async () => {
-    const extension = vscode.extensions.getExtension('mhdstk.vscode-stories');
+    const extension = vscode.extensions.getExtension('mhdstk.dev-stories');
     if (extension) {
       if (!extension.isActive) {
         await extension.activate();
@@ -20,12 +18,12 @@ suite('Extension Test Suite', () => {
 
   test('Commands should be registered', async () => {
     const commands = await vscode.commands.getCommands();
-    const storyCommands = commands.filter(cmd => cmd.startsWith('vscode-stories.'));
+    const storyCommands = commands.filter(cmd => cmd.startsWith('dev-stories.'));
     
     // Check that essential commands are registered
-    assert.ok(storyCommands.includes('vscode-stories.authenticate'));
-    assert.ok(storyCommands.includes('vscode-stories.viewFeed'));
-    assert.ok(storyCommands.includes('vscode-stories.createStory'));
+    assert.ok(storyCommands.includes('dev-stories.authenticate'));
+    assert.ok(storyCommands.includes('dev-stories.viewFeed'));
+    assert.ok(storyCommands.includes('dev-stories.createStory'));
     assert.ok(storyCommands.length >= 10, `Expected at least 10 story commands, found ${storyCommands.length}`);
   });
 });
