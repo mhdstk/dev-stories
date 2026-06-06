@@ -212,12 +212,91 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         // Tree view actions
-        vscode.commands.registerCommand('dev-stories.joinGroup', (group) => {
-            vscode.window.showInformationMessage(`Joining group: ${group.label}`);
+        vscode.commands.registerCommand('dev-stories.joinGroup', async (groupOrItem) => {
+            if (!(await authService.ensureAuthenticated())) {
+                vscode.window.showErrorMessage('Please authenticate with GitHub first');
+                return;
+            }
+
+            let groupId: string | undefined;
+            let groupName: string | undefined;
+
+            if (groupOrItem) {
+                if (typeof groupOrItem === 'string') {
+                    groupId = groupOrItem;
+                    groupName = groupOrItem;
+                } else if (typeof groupOrItem.id === 'string') {
+                    groupId = groupOrItem.id;
+                    groupName = groupOrItem.name || groupOrItem.label;
+                } else if (groupOrItem.label && typeof groupOrItem.label === 'string') {
+                    groupId = groupOrItem.label.toLowerCase().replace(/\s+/g, '-');
+                    groupName = groupOrItem.label;
+                }
+            }
+
+            if (!groupId) {
+                const groups = await socialService.getStoryGroups();
+                const items = groups.map(g => ({
+                    label: g.name,
+                    description: g.description,
+                    group: g
+                }));
+                const selected = await vscode.window.showQuickPick(items, {
+                    placeHolder: 'Select a group to join',
+                    ignoreFocusOut: true
+                });
+                if (selected) {
+                    groupId = selected.group.id;
+                    groupName = selected.group.name;
+                }
+            }
+
+            if (groupId) {
+                const success = await socialService.joinGroup(groupId);
+                if (success) {
+                    if (groupName) {
+                        vscode.window.showInformationMessage(`Joined group: ${groupName}`);
+                    }
+                    groupsProvider.refresh();
+                }
+            }
         }),
 
-        vscode.commands.registerCommand('dev-stories.followUser', (user) => {
-            vscode.window.showInformationMessage(`Following user: ${user.label}`);
+        vscode.commands.registerCommand('dev-stories.followUser', async (userOrItem) => {
+            if (!(await authService.ensureAuthenticated())) {
+                vscode.window.showErrorMessage('Please authenticate with GitHub first');
+                return;
+            }
+
+            let username: string | undefined;
+
+            if (userOrItem) {
+                if (typeof userOrItem === 'string') {
+                    username = userOrItem;
+                } else if (typeof userOrItem.login === 'string') {
+                    username = userOrItem.login;
+                } else if (userOrItem.description && typeof userOrItem.description === 'string' && userOrItem.description.startsWith('@')) {
+                    username = userOrItem.description.substring(1);
+                } else if (userOrItem.label && typeof userOrItem.label === 'string') {
+                    username = userOrItem.label;
+                }
+            }
+
+            if (!username) {
+                username = await vscode.window.showInputBox({
+                    prompt: 'Enter the GitHub username you want to follow',
+                    placeHolder: 'e.g. octocat',
+                    ignoreFocusOut: true
+                });
+            }
+
+            if (username) {
+                const success = await socialService.followUser(username);
+                if (success) {
+                    followingProvider.refresh();
+                    feedProvider.refresh();
+                }
+            }
         }),
 
         // Story management commands
