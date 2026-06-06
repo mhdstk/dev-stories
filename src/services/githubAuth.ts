@@ -52,7 +52,7 @@ export class GitHubAuthService {
             // Set authentication context
             vscode.commands.executeCommand('setContext', 'devstories.authenticated', true);
             
-            vscode.window.showInformationMessage(`Welcome to VS Code Stories, ${this.currentUser.name}!`);
+            vscode.window.showInformationMessage(`Welcome to Dev Stories, ${this.currentUser.name}!`);
 
             return {
                 user: this.currentUser,

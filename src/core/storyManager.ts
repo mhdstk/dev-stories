@@ -3,6 +3,7 @@ import { Story, CreateStoryRequest, StoryFeed, StoryDraft } from '@/types';
 import { GitHubStorageService } from '@/services/githubStorage';
 import { GitHubAuthService } from '@/services/githubAuth';
 import { StoryValidator } from './storyValidator';
+import { SocialService } from '@/services/socialService';
 
 export class StoryManager {
     private static instance: StoryManager;
@@ -107,17 +108,69 @@ export class StoryManager {
     }
 
     async getStoryFeed(): Promise<StoryFeed> {
-        // TODO: Implement feed logic with following, groups, etc.
-        const myStories = await this.getMyStories();
-        
-        return {
-            stories: myStories.map(story => ({
-                story,
-                isViewed: false
-            })),
-            hasMore: false,
-            lastUpdated: Date.now()
-        };
+        if (!await this.authService.ensureAuthenticated()) {
+            return {
+                stories: [],
+                hasMore: false,
+                lastUpdated: Date.now()
+            };
+        }
+
+        try {
+            // Get own stories
+            const myStories = await this.getMyStories();
+            
+            // Get followed users
+            const socialService = SocialService.getInstance(this.context);
+            const following = await socialService.getFollowing();
+
+            // Fetch stories from followed users in parallel
+            const followedStoriesPromises = following.map(user => 
+                this.storageService.getUserStories(user.login)
+            );
+            const followedStoriesNested = await Promise.all(followedStoriesPromises);
+            
+            // Flatten the followed stories list
+            const followedStories = followedStoriesNested.flat();
+
+            // Combine all stories (own + followed)
+            const allStoriesMap = new Map<string, Story>();
+            
+            // Add followed stories
+            for (const story of followedStories) {
+                allStoriesMap.set(story.id, story);
+            }
+            // Add own stories (overwriting duplicates just in case)
+            for (const story of myStories) {
+                allStoriesMap.set(story.id, story);
+            }
+
+            // Filter out expired stories and sort descending by timestamp
+            const activeStories = Array.from(allStoriesMap.values())
+                .filter(story => !StoryValidator.isStoryExpired(story))
+                .sort((a, b) => b.timestamp - a.timestamp);
+
+            return {
+                stories: activeStories.map(story => ({
+                    story,
+                    isViewed: false
+                })),
+                hasMore: false,
+                lastUpdated: Date.now()
+            };
+        } catch (error) {
+            console.error('Failed to compile story feed:', error);
+            // Fall back to just own stories if fetching following fails
+            const myStories = await this.getMyStories();
+            return {
+                stories: myStories.map(story => ({
+                    story,
+                    isViewed: false
+                })),
+                hasMore: false,
+                lastUpdated: Date.now()
+            };
+        }
     }
 
     private async askForVisibility(): Promise<'public' | 'followers' | 'group' | 'private' | undefined> {

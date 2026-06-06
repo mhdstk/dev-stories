@@ -31,7 +31,7 @@ export class GitHubStorageService {
             return null;
         }
 
-        const repoName = 'vscode-stories-data';
+        const repoName = 'dev-stories-data';
         const owner = user.login;
 
         try {
@@ -64,11 +64,11 @@ export class GitHubStorageService {
         const octokit = this.getOctokit();
         if (!octokit) return;
 
-        // Create private repository
+        // Create public repository so other users can read stories
         await octokit.rest.repos.createForAuthenticatedUser({
             name: repoName,
             description: 'VS Code Stories data storage',
-            private: true,
+            private: false,
             auto_init: true
         });
 
@@ -248,7 +248,7 @@ jobs:
                 viewers: [],
                 reactions: {},
                 metadata: {
-                    createdWith: vscode.extensions.getExtension('mhdstk.vscode-stories')?.packageJSON.version || '0.1.0',
+                    createdWith: vscode.extensions.getExtension('mhdstk.dev-stories')?.packageJSON.version || '0.1.0',
                     projectContext: await this.getProjectContext()
                 }
             };
@@ -282,7 +282,7 @@ jobs:
         }
     }
 
-    async getStory(storyId: string): Promise<Story | null> {
+    async getStory(storyId: string, owner?: string, path?: string): Promise<Story | null> {
         // Try local cache first
         const cachedStory = await this.getCachedStory(storyId);
         if (cachedStory && !StoryValidator.isStoryExpired(cachedStory)) {
@@ -290,31 +290,44 @@ jobs:
         }
 
         // If not in cache or expired, try to fetch from GitHub
-        const repoInfo = await this.ensureStoriesRepository();
         const octokit = this.getOctokit();
+        if (!octokit) {
+            return null;
+        }
 
-        if (!repoInfo || !octokit) {
+        const targetOwner = owner || (await this.authService.getAuthenticatedUser())?.login;
+        if (!targetOwner) {
             return null;
         }
 
         try {
-            // Search for story file
-            const searchResult = await octokit.rest.search.code({
-                q: `filename:${storyId}.json repo:${repoInfo.owner}/${repoInfo.repo}`
-            });
+            let fileContent;
+            if (path) {
+                // Fetch directly by path (very fast, no search API needed)
+                fileContent = await octokit.rest.repos.getContent({
+                    owner: targetOwner,
+                    repo: 'dev-stories-data',
+                    path: path
+                });
+            } else {
+                // Fallback to searching for the file
+                const searchResult = await octokit.rest.search.code({
+                    q: `filename:${storyId}.json repo:${targetOwner}/dev-stories-data`
+                });
 
-            if (searchResult.data.items.length === 0) {
-                return null;
+                if (searchResult.data.items.length === 0) {
+                    return null;
+                }
+
+                const item = searchResult.data.items[0];
+                fileContent = await octokit.rest.repos.getContent({
+                    owner: targetOwner,
+                    repo: 'dev-stories-data',
+                    path: item.path
+                });
             }
 
-            const item = searchResult.data.items[0];
-            const fileContent = await octokit.rest.repos.getContent({
-                owner: repoInfo.owner,
-                repo: repoInfo.repo,
-                path: item.path
-            });
-
-            if ('content' in fileContent.data) {
+            if (fileContent && 'content' in fileContent.data) {
                 const storyData = JSON.parse(
                     Buffer.from(fileContent.data.content, 'base64').toString()
                 );
@@ -327,31 +340,68 @@ jobs:
                 }
             }
         } catch (error) {
-            console.error('Failed to fetch story:', error);
+            console.error(`Failed to fetch story ${storyId} for user ${targetOwner}:`, error);
         }
 
         return null;
     }
 
     async getUserStories(username?: string): Promise<Story[]> {
-        const targetUser = username || (await this.authService.getAuthenticatedUser())?.login;
+        const currentUser = (await this.authService.getAuthenticatedUser())?.login;
+        const targetUser = username || currentUser;
         if (!targetUser) return [];
 
-        const repoInfo = await this.ensureStoriesRepository();
         const octokit = this.getOctokit();
-
-        if (!repoInfo || !octokit) {
+        if (!octokit) {
             return [];
         }
 
+        // If it's the current user, ensure their repository exists first
+        if (targetUser === currentUser) {
+            await this.ensureStoriesRepository();
+        }
+
         try {
-            // Get stories directory contents
+            // Get default branch of target user's repo
+            let branch = 'main';
+            try {
+                const repoDetail = await octokit.rest.repos.get({
+                    owner: targetUser,
+                    repo: 'dev-stories-data'
+                });
+                branch = repoDetail.data.default_branch;
+            } catch (err: any) {
+                // If the repository doesn't exist or isn't accessible, return empty
+                if (err.status === 404) {
+                    console.log(`Repository dev-stories-data not found for user ${targetUser}`);
+                    return [];
+                }
+                branch = 'main';
+            }
+
+            // Get recursive git tree
+            const treeResponse = await octokit.rest.git.getTree({
+                owner: targetUser,
+                repo: 'dev-stories-data',
+                tree_sha: branch,
+                recursive: 'true'
+            });
+
             const stories: Story[] = [];
-            const contents = await this.getRepositoryContents(octokit, repoInfo, 'stories');
-            
-            for (const item of contents) {
-                if (item.type === 'file' && item.name.endsWith('.json')) {
-                    const story = await this.getStory(item.name.replace('.json', ''));
+            if (treeResponse.data.tree) {
+                const storyFiles = treeResponse.data.tree.filter(
+                    (item: any) => item.path && item.path.startsWith('stories/') && item.path.endsWith('.json')
+                );
+
+                const promises = storyFiles.map(async (file: any) => {
+                    const parts = file.path.split('/');
+                    const filename = parts[parts.length - 1];
+                    const storyId = filename.replace('.json', '');
+                    return this.getStory(storyId, targetUser, file.path);
+                });
+
+                const fetchedStories = await Promise.all(promises);
+                for (const story of fetchedStories) {
                     if (story && !StoryValidator.isStoryExpired(story)) {
                         stories.push(story);
                     }
@@ -360,7 +410,7 @@ jobs:
 
             return stories.sort((a, b) => b.timestamp - a.timestamp);
         } catch (error) {
-            console.error('Failed to fetch user stories:', error);
+            console.error(`Failed to fetch user stories for user ${targetUser}:`, error);
             return [];
         }
     }

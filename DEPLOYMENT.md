@@ -15,7 +15,7 @@ cd webview-ui && npm run build && cd ..
 npx vsce package
 
 # 3. Publish to OpenVSX
-npx ovsx publish vscode-stories-0.1.0.vsix -p YOUR_TOKEN
+npx ovsx publish dev-stories-0.1.0.vsix -p YOUR_TOKEN
 ```
 
 ### **Method 2: Using npm Scripts**
@@ -78,12 +78,12 @@ Ensure your `package.json` includes:
 
 ```json
 {
-  "name": "vscode-stories",
+  "name": "dev-stories",
   "publisher": "mhdstk",
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mhdstk/vscode-stories.git"
+    "url": "https://github.com/mhdstk/dev-stories.git"
   },
   "license": "MIT",
   "icon": "media/icon.png"
@@ -134,22 +134,22 @@ npx vsce ls
 
 ```bash
 # Install locally to test
-code --install-extension vscode-stories-0.1.0.vsix
+code --install-extension dev-stories-0.1.0.vsix
 
 # Test the extension
 # Uninstall when done
-code --uninstall-extension mhdstk.vscode-stories
+code --uninstall-extension mhdstk.dev-stories
 ```
 
 ### **Step 4: Publish to OpenVSX**
 
 ```bash
 # Method A: Using token directly
-npx ovsx publish vscode-stories-0.1.0.vsix -p YOUR_TOKEN
+npx ovsx publish dev-stories-0.1.0.vsix -p YOUR_TOKEN
 
 # Method B: Using environment variable
 export OVSX_TOKEN="your-token-here"
-npx ovsx publish vscode-stories-0.1.0.vsix
+npx ovsx publish dev-stories-0.1.0.vsix
 
 # Method C: Using npm script
 npm run publish:openvsx
@@ -197,7 +197,7 @@ VSCE_TOKEN=your-vscode-marketplace-token-here
 
 After publishing, verify your extension:
 
-1. **Visit OpenVSX**: https://open-vsx.org/extension/mhdstk/vscode-stories
+1. **Visit OpenVSX**: https://open-vsx.org/extension/mhdstk/dev-stories
 2. **Check Details**: Ensure description, icon, and links work
 3. **Test Installation**: Install from OpenVSX in VS Code
 4. **Monitor Downloads**: Check adoption metrics
@@ -232,7 +232,7 @@ npx ovsx --version
 npx ovsx verify-namespace mhdstk
 
 # Test token
-npx ovsx search vscode-stories
+npx ovsx search dev-stories
 
 # Validate package
 npx vsce ls
