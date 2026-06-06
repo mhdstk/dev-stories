@@ -233,7 +233,7 @@ jobs:
                 id: StoryValidator.generateStoryId(),
                 authorGitHubId: user.id.toString(),
                 authorUsername: user.login,
-                authorName: user.name,
+                authorName: user.name || user.login || 'Unknown User',
                 authorAvatar: user.avatar_url,
                 timestamp: now,
                 expiresAt: now + (expiresIn * 60 * 60 * 1000),

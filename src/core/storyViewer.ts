@@ -28,7 +28,7 @@ export class StoryViewer {
         }
 
         const quickPickItems = stories.map(story => ({
-            label: `$(${this.getStoryIcon(story)}) ${story.authorName}`,
+            label: `$(${this.getStoryIcon(story)}) ${story.authorName || story.authorUsername || 'Unknown User'}`,
             description: this.getStoryDescription(story),
             detail: this.getStoryPreview(story),
             story: story
@@ -46,7 +46,7 @@ export class StoryViewer {
     async viewStoryDetails(story: Story): Promise<void> {
         const panel = vscode.window.createWebviewPanel(
             'storyDetails',
-            `Story by ${story.authorName}`,
+            `Story by ${story.authorName || story.authorUsername || 'Unknown User'}`,
             vscode.ViewColumn.One,
             {
                 enableScripts: true,
@@ -66,7 +66,7 @@ export class StoryViewer {
 
         switch (story.content.type) {
             case 'text':
-                content = `# Story by ${story.authorName}\n\n${story.content.text}`;
+                content = `# Story by ${story.authorName || story.authorUsername || 'Unknown User'}\n\n${story.content.text}`;
                 break;
             case 'code':
                 if (story.content.code) {
@@ -75,10 +75,10 @@ export class StoryViewer {
                 }
                 break;
             case 'image':
-                content = `# Story by ${story.authorName}\n\n![Story Image](${story.content.image?.url})\n\n${story.content.image?.caption || ''}`;
+                content = `# Story by ${story.authorName || story.authorUsername || 'Unknown User'}\n\n![Story Image](${story.content.image?.url})\n\n${story.content.image?.caption || ''}`;
                 break;
             default:
-                content = `# Story by ${story.authorName}\n\nMixed content story`;
+                content = `# Story by ${story.authorName || story.authorUsername || 'Unknown User'}\n\nMixed content story`;
         }
 
         const document = await vscode.workspace.openTextDocument({
@@ -102,7 +102,7 @@ export class StoryViewer {
             .join(' ');
 
         const info = [
-            `👤 **Author**: ${story.authorName} (@${story.authorUsername})`,
+            `👤 **Author**: ${story.authorName || story.authorUsername || 'Unknown User'} (@${story.authorUsername})`,
             `🕒 **Created**: ${new Date(story.timestamp).toLocaleString()}`,
             `⏰ **Expires in**: ${timeLeft}`,
             `👁️ **Views**: ${story.viewCount}`,
@@ -241,9 +241,9 @@ export class StoryViewer {
 </head>
 <body>
     <div class="header">
-        <img src="${story.authorAvatar}" alt="${story.authorName}" class="avatar">
+        <img src="${story.authorAvatar}" alt="${story.authorName || story.authorUsername || 'Unknown User'}" class="avatar">
         <div class="author-info">
-            <div class="author-name">${story.authorName}</div>
+            <div class="author-name">${story.authorName || story.authorUsername || 'Unknown User'}</div>
             <div class="author-username">@${story.authorUsername}</div>
         </div>
         <div class="meta">

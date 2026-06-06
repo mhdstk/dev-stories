@@ -184,7 +184,7 @@
       ]
     },
     "views": {
-      "stories-explorer": [
+      "devstories-explorer": [
         {
           "id": "devstories.feed",
           "name": "Story Feed",

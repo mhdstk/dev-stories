@@ -9,9 +9,9 @@ export class StoryTreeItem extends vscode.TreeItem {
         public readonly story: Story,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState
     ) {
-        super(story.authorName, collapsibleState);
+        super(story.authorName || story.authorUsername || 'Unknown User', collapsibleState);
         
-        this.tooltip = `${story.authorName} (@${story.authorUsername})\n${this.getContentPreview(story)}`;
+        this.tooltip = `${story.authorName || story.authorUsername || 'Unknown User'} (@${story.authorUsername})\n${this.getContentPreview(story)}`;
         this.description = this.getTimeAgo(story.timestamp);
         this.contextValue = 'story';
         this.iconPath = new vscode.ThemeIcon('broadcast');

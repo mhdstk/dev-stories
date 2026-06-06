@@ -88,6 +88,18 @@ export function activate(context: vscode.ExtensionContext) {
         }),
 
         vscode.commands.registerCommand('dev-stories.openStory', async (story) => {
+            if (!story) {
+                vscode.window.showErrorMessage('No story selected. Please select a story from the Dev Stories panel.');
+                return;
+            }
+
+            // Validate story structure
+            if (!story.authorName || !story.authorUsername) {
+                vscode.window.showErrorMessage('Invalid story data. The story may be corrupted.');
+                console.error('Invalid story object:', story);
+                return;
+            }
+
             const viewer = StoryViewer.getInstance(context);
             
             const options = [
@@ -100,16 +112,25 @@ export function activate(context: vscode.ExtensionContext) {
                 placeHolder: 'How would you like to view this story?'
             });
 
-            switch (choice) {
-                case 'View in Webview':
-                    await viewer.viewStoryDetails(story);
-                    break;
-                case 'Show in Editor':
-                    await viewer.showStoryInEditor(story);
-                    break;
-                case 'View Info Only':
-                    await viewer.displayStoryInfo(story);
-                    break;
+            if (!choice) {
+                return; // User cancelled
+            }
+
+            try {
+                switch (choice) {
+                    case 'View in Webview':
+                        await viewer.viewStoryDetails(story);
+                        break;
+                    case 'Show in Editor':
+                        await viewer.showStoryInEditor(story);
+                        break;
+                    case 'View Info Only':
+                        await viewer.displayStoryInfo(story);
+                        break;
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(`Failed to open story: ${error instanceof Error ? error.message : 'Unknown error'}`);
+                console.error('Error opening story:', error);
             }
         }),
 
